@@ -22,6 +22,7 @@ import * as ImagePicker from "expo-image-picker";
 import { makeRequest } from "../api/axios";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
+import { API_URL } from "../api/baseURL";
 
 interface AddFeedProps {
   navigation: any;
@@ -69,6 +70,7 @@ function AddFeed({ navigation }: AddFeedProps) {
     formData.append("user_status", "no");
     formData.append("privacy", "4");
     formData.append("photo_type", "photo");
+
     // if (uploadImage) {
     //   const localUri = uploadImage;
     //   const filename = localUri.split("/").pop();
@@ -133,7 +135,7 @@ function AddFeed({ navigation }: AddFeedProps) {
         selectedUri = result.assets[0].uri;
       }
       const formData = new FormData();
-      // console.log(selectedUri);
+      console.log(selectedUri);
       setUploadImage(selectedUri);
       if (uploadImage) {
         const localUri = uploadImage;
@@ -145,7 +147,7 @@ function AddFeed({ navigation }: AddFeedProps) {
         });
       }
       const data = await axios.post(
-        `/file`,
+        API_URL + `/file`,
         {
           formData,
         },
