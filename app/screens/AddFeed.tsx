@@ -35,7 +35,8 @@ function AddFeed({ navigation }: AddFeedProps) {
   const [uploadImage, setUploadImage] = useState("");
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
-  // console.log(auth?.token);
+  const [uploadImageLoading, setUploadImageLoading] = useState(false);
+  console.log(image);
 
   const handleValueChange = (value: string) => {
     setSelectedValue(value);
@@ -108,6 +109,7 @@ function AddFeed({ navigation }: AddFeedProps) {
   };
 
   const handleUpload = async () => {
+    setUploadImageLoading(true);
     try {
       let permissionResult =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -135,32 +137,35 @@ function AddFeed({ navigation }: AddFeedProps) {
         selectedUri = result.assets[0].uri;
       }
       const formData = new FormData();
-      console.log(selectedUri);
       setUploadImage(selectedUri);
       if (uploadImage) {
         const localUri = uploadImage;
         const filename = localUri.split("/").pop();
+        // formData.append("file", localUri);
         formData.append("file", {
-          uri: localUri,
+          uri: selectedUri,
           name: filename,
           type: "image/jpeg",
         });
-      }
-      const data = await axios.post(
-        API_URL + `/file`,
-        {
-          formData,
-        },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${auth?.token}`,
+        // console.log(localUri);
+        const response = await axios.post(
+          API_URL + `/file`,
+          {
+            file: localUri,
           },
-        }
-      );
-      console.log(data);
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${auth?.token}`,
+            },
+          }
+        );
+        setImage(response.data);
+        setUploadImageLoading(false);
+      }
     } catch (error) {
       console.log(error);
+      setUploadImageLoading(false);
     }
   };
   return (
@@ -262,6 +267,7 @@ function AddFeed({ navigation }: AddFeedProps) {
                       className=" w-[40px] h-[40px] rounded-full"
                     />
                   </View>
+                  {uploadImageLoading ? <Text>Uploading...</Text> : ""}
                 </>
               ) : (
                 ""
