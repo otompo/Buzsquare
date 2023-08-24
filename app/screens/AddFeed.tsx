@@ -148,15 +148,15 @@ function AddFeed({ navigation }: AddFeedProps) {
           type: "image/jpeg",
         });
         // console.log(localUri);
-        const response = await axios.post(
-          API_URL + `/file`,
+        const response = await makeRequest.post(
+          `/file`,
           {
             file: localUri,
           },
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${auth?.token}`,
+              // Authorization: `Bearer ${auth?.token}`,
             },
           }
         );
