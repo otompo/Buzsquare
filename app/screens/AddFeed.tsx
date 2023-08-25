@@ -33,7 +33,7 @@ function AddFeed({ navigation }: AddFeedProps) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [name, setName] = useState("");
   const [biography, setBiography] = useState("");
-  const [notify_nominee, setNotify_nominee] = useState("");
+  // const [notify_nominee, setNotify_nominee] = useState("");
   const [selectedValue, setSelectedValue] = useState<string>("Yes");
   const [addProject, setAddProject] = useState<string>("Yes");
   const [uploadImage, setUploadImage] = useState("");
@@ -61,7 +61,7 @@ function AddFeed({ navigation }: AddFeedProps) {
     formData.append("privacy", "4");
     formData.append("photo_type", "photo");
     formData.append("file", image?.data?.url);
-    // formData.append("avatar", image?.data?.url);
+    formData.append("avatar", image?.data?.url);
     formData.append("impact", " ");
     console.log("tagged_friends", []);
     // formData.append("item_type", "photo");
