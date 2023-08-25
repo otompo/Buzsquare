@@ -12,18 +12,17 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
-import Header from "../components/Header";
-import { Picker } from "@react-native-picker/picker";
-import colors from "../utils/colors";
 import SubmitButton from "../components/Button/SubmitButton";
 import CustomRadioButton from "../components/CustomRadioButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/Ionicons";
+import { Picker } from "@react-native-picker/picker";
+import { AuthContext } from "../context/authContext";
 import * as ImagePicker from "expo-image-picker";
 import { makeRequest } from "../api/axios";
-import { AuthContext } from "../context/authContext";
-import axios from "axios";
+import Header from "../components/Header";
 import { API_URL } from "../api/baseURL";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import colors from "../utils/colors";
 
 interface AddFeedProps {
   navigation: any;
@@ -63,7 +62,8 @@ function AddFeed({ navigation }: AddFeedProps) {
     formData.append("file", image?.data?.url);
     formData.append("avatar", image?.data?.url);
     formData.append("impact", " ");
-    console.log("tagged_friends", []);
+    // formData.append("tagged_friends", []);
+    // console.log("tagged_friends", []);
     // formData.append("item_type", "photo");
     // formData.append("file_type", "photo");
     // formData.append("id", "-1");
