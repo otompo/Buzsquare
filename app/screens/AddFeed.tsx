@@ -61,7 +61,7 @@ function AddFeed({ navigation }: AddFeedProps) {
     formData.append("privacy", "4");
     formData.append("photo_type", "photo");
     formData.append("file", image?.data?.url);
-    formData.append("avatar", image?.data?.url);
+    // formData.append("avatar", image?.data?.url);
     formData.append("impact", " ");
     console.log("tagged_friends", []);
     // formData.append("item_type", "photo");
