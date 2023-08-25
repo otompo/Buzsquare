@@ -93,10 +93,20 @@ function Home({ navigation }: HomeProps) {
       <>
         <View className="m-3">
           <View className="flex flex-row gap-3">
-            <Image
-              source={{ uri: item?.user?.avatar?.origin }}
-              className=" w-[60px] h-[60px] rounded-full"
-            />
+            {item?.user?.avatar?.origin ? (
+              <>
+                <Image
+                  source={{ uri: item?.user?.avatar?.origin }}
+                  className=" w-[60px] h-[60px] rounded-full"
+                />
+              </>
+            ) : (
+              <View className="h-16 w-16 rounded-full bg-primary  flex justify-center items-center">
+                <Text className="py-5 text-base font-semibold uppercase text-center text-white">
+                  {item?.user?.full_name?.substring(0, 2)}
+                </Text>
+              </View>
+            )}
             <Text className="py-5 text-base font-semibold">
               {item.user.full_name}
             </Text>

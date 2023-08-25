@@ -51,7 +51,6 @@ function AddFeed({ navigation }: AddFeedProps) {
   const handleSubmit = async () => {
     setLoading(true);
     const formData = new FormData();
-
     formData.append("name", name);
     formData.append("biography", biography);
     formData.append("category", selectedCategory);
@@ -62,6 +61,7 @@ function AddFeed({ navigation }: AddFeedProps) {
     formData.append("privacy", "4");
     formData.append("photo_type", "photo");
     formData.append("file", image?.data?.url);
+    formData.append("avatar", image?.data?.url);
     formData.append("impact", " ");
     console.log("tagged_friends", []);
     // formData.append("item_type", "photo");
@@ -223,7 +223,7 @@ function AddFeed({ navigation }: AddFeedProps) {
         backIcon={() => navigation.goBack()}
         HeaderTitle="Honor / Gratitude"
       />
-      <View>
+      {/* <View>
         <TouchableOpacity
           style={{
             flexDirection: "row",
@@ -238,7 +238,7 @@ function AddFeed({ navigation }: AddFeedProps) {
             Log Out
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
       <SafeAreaView className="flex-1 bg-[#ffffff] p-4">
         <ScrollView
           showsVerticalScrollIndicator={false}
