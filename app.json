@@ -26,10 +26,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#1bc10d"
-      }
+      },
+      "package": "com.codesmartwebsoft.BuzSquare"
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0024f236-b99d-48a6-878b-68cf22dc6979"
+      }
     }
   }
 }

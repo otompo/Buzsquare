@@ -23,6 +23,7 @@ import { makeRequest } from "../api/axios";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
 import { API_URL } from "../api/baseURL";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AddFeedProps {
   navigation: any;
@@ -30,13 +31,15 @@ interface AddFeedProps {
 function AddFeed({ navigation }: AddFeedProps) {
   const [auth, setAuth] = useContext(AuthContext);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [name, setName] = useState("");
+  const [biography, setBiography] = useState("");
+  const [notify_nominee, setNotify_nominee] = useState("");
   const [selectedValue, setSelectedValue] = useState<string>("Yes");
   const [addProject, setAddProject] = useState<string>("Yes");
   const [uploadImage, setUploadImage] = useState("");
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
-  console.log(image);
 
   const handleValueChange = (value: string) => {
     setSelectedValue(value);
@@ -48,44 +51,27 @@ function AddFeed({ navigation }: AddFeedProps) {
   const handleSubmit = async () => {
     setLoading(true);
     const formData = new FormData();
-    // formData.append("file", selectedFile);
-    // post_type: "activity_post",
-    // tagged_friends: [null],
-    // category: "Academic leader",
-    // name: "",
-    // biography: "",
-    // impact: "",
-    // notify_nominee: "no",
-    // add_project: "no",
-    // project: "",
-    // user_status: "",
-    // privacy: 4,
-    formData.append("name", "");
-    formData.append("biography", "photo");
-    formData.append("biography", "photo");
-    formData.append("category", "photo");
-    formData.append("post_type", uploadImage);
-    formData.append("notify_nominee", "no");
-    formData.append("project", "no");
-    formData.append("notify_nominee", "no");
-    formData.append("user_status", "no");
+
+    formData.append("name", name);
+    formData.append("biography", biography);
+    formData.append("category", selectedCategory);
+    formData.append("post_type", "activity_post");
+    formData.append("notify_nominee", selectedValue);
+    formData.append("project", addProject);
+    formData.append("user_status", biography);
     formData.append("privacy", "4");
     formData.append("photo_type", "photo");
-
-    // if (uploadImage) {
-    //   const localUri = uploadImage;
-    //   const filename = localUri.split("/").pop();
-    //   formData.append("file", {
-    //     uri: localUri,
-    //     name: filename,
-    //     type: "image/jpeg",
-    //   });
-
+    formData.append("file", image?.data?.url);
+    formData.append("impact", " ");
+    console.log("tagged_friends", []);
+    // formData.append("item_type", "photo");
+    // formData.append("file_type", "photo");
+    // formData.append("id", "-1");
+    // formData.append("photo_type", "photo");
     try {
       const { data } = await makeRequest.post(`/feed`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${auth?.token}`,
         },
       });
 
@@ -102,78 +88,157 @@ function AddFeed({ navigation }: AddFeedProps) {
       }
       setLoading(false);
     } catch (err) {
-      console.log(err.response.data.message);
+      console.log(err.response.data.meassage);
       // alert(err);
       setLoading(false);
     }
   };
 
+  const handleSignout = async () => {
+    setAuth({ token: "", user: null });
+    await AsyncStorage.removeItem("@auth");
+  };
+  // const handleUpload = async () => {
+  //   setUploadImageLoading(true);
+  //   try {
+  //     let permissionResult =
+  //       await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  //     if (permissionResult.granted !== true) {
+  //       alert("Camera access is required");
+  //       return;
+  //     }
+
+  //     const options = {
+  //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //       allowsEditing: true,
+  //       aspect: [4, 3],
+  //       quality: 1,
+  //     };
+
+  //     const result = await ImagePicker.launchImageLibraryAsync(options);
+
+  //     if (result.canceled) {
+  //       // User cancelled the image selection
+  //       return;
+  //     }
+
+  //     const selectedUri = result?.result?.assets[0].uri; // Use result.uri directly
+
+  //     // if (result.assets && result.assets.length > 0) {
+  //     //   // Use the first asset's uri
+  //     //   selectedUri = result.assets[0].uri;
+  //     // }
+
+  //     const formData = new FormData();
+  //     setUploadImage(selectedUri);
+  //     if (selectedUri) {
+  //       const localUri = selectedUri;
+  //       const filename = localUri.split("/").pop();
+
+  //       formData.append("file", {
+  //         uri: localUri,
+  //         name: filename,
+  //         type: "image/jpeg",
+  //       });
+  //       console.log(selectedUri);
+  //       console.log(formData);
+  //       const response = await axios.post(
+  //         API_URL + `/file`,
+  //         formData, // Send the formData directly
+  //         {
+  //           headers: {
+  //             "Content-Type": "multipart/form-data",
+  //             Authorization: `Bearer ${auth?.token}`,
+  //           },
+  //         }
+  //       );
+
+  //       setImage(response.data);
+  //       setUploadImageLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.log(error?.response.data.message);
+  //     setUploadImageLoading(false);
+  //   }
+  // };
   const handleUpload = async () => {
     setUploadImageLoading(true);
     try {
       let permissionResult =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
-      // console.log(permissionResult);
+
       if (permissionResult.granted !== true) {
         alert("Camera access is required");
         return;
       }
+
       const options = {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
       };
+
       const result = await ImagePicker.launchImageLibraryAsync(options);
 
       if (result.canceled) {
         // User cancelled the image selection
         return;
       }
-      let selectedUri = null;
 
-      if (result.assets && result.assets.length > 0) {
-        // Use the first asset's uri
-        selectedUri = result.assets[0].uri;
-      }
-      const formData = new FormData();
+      const selectedUri = result.assets[0].uri; // Use the selected image URI
       setUploadImage(selectedUri);
-      if (uploadImage) {
-        const localUri = uploadImage;
-        const filename = localUri.split("/").pop();
-        // formData.append("file", localUri);
-        formData.append("file", {
-          uri: selectedUri,
-          name: filename,
-          type: "image/jpeg",
-        });
-        // console.log(localUri);
-        const response = await makeRequest.post(
-          `/file`,
-          {
-            file: localUri,
+      const filename = selectedUri.split("/").pop();
+      const formData = new FormData();
+      formData.append("file", {
+        uri: selectedUri,
+        name: filename,
+        type: "image/jpeg",
+        size: 10 * 1024 * 1024,
+      });
+
+      const response = await makeRequest.post(
+        API_URL + `/file`,
+        formData, // Send formData directly
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // Authorization: `Bearer ${auth?.access_token}`,
           },
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              // Authorization: `Bearer ${auth?.token}`,
-            },
-          }
-        );
-        setImage(response.data);
-        setUploadImageLoading(false);
-      }
+        }
+      );
+
+      setImage(response.data);
+      setUploadImageLoading(false);
     } catch (error) {
-      console.log(error?.response.data.message);
+      console.log(error?.response?.data?.message);
       setUploadImageLoading(false);
     }
   };
+
   return (
     <>
       <Header
         backIcon={() => navigation.goBack()}
         HeaderTitle="Honor / Gratitude"
       />
+      <View>
+        <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginLeft: 20,
+            marginBottom: 20,
+          }}
+          onPress={handleSignout}
+        >
+          <Icon name="power" size={30} color={colors.danger} />
+          <Text style={{ color: "#333", fontSize: 16, paddingLeft: 10 }}>
+            Log Out
+          </Text>
+        </TouchableOpacity>
+      </View>
       <SafeAreaView className="flex-1 bg-[#ffffff] p-4">
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -210,8 +275,8 @@ function AddFeed({ navigation }: AddFeedProps) {
             }}
             multiline
             placeholder="Name..."
-            // value={value}
-            // onChangeText={onChange}
+            value={name}
+            onChangeText={setName}
             editable
           />
           <TextInput
@@ -227,8 +292,8 @@ function AddFeed({ navigation }: AddFeedProps) {
             }}
             multiline
             placeholder="Calebrant's Biography."
-            // value={value}
-            // onChangeText={onChange}
+            value={biography}
+            onChangeText={setBiography}
             editable
           />
           <TextInput

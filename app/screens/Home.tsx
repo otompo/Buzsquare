@@ -117,9 +117,9 @@ function Home({ navigation }: HomeProps) {
     );
   };
 
-  if (initLoading) {
-    return <Loader message="Loading Forms..." />;
-  }
+  // if (initLoading) {
+  //   return <Loader message="Loading Forms..." />;
+  // }
   // if (!feeds?.length) return null;
   return (
     <>
